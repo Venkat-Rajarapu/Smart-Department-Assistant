@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Department Assistant</title>
+<link rel="stylesheet" href="styles.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<header class="main-header">
+<nav class="navbar">
+    <h1 style="display: inline; margin: 0;">Smart Department Assistant</h1>
+    <ul class="nav-links">
+        <li><a href="login.html?redirect=report.html">Report an Issue</a></li>
+        <li><a href="workshop.html">Workshops</a></li>
+        <li><a href="roadmaps.html">RoadMaps</a></li>
+        <li><a href="Resources.html">Student Resources</a></li>
+        <li><a href="lostfound.html">Lost&Found</a></li>
+        <li><a href="Admin.html">Admin</a></li>
+    </ul>
+</nav>
+
+<div class="slideshow-container">
+    <div class="slide fade">
+        <img src="https://wallpaperbat.com/img/424161-data-science-wallpaper-top-free-data-science-background.jpg" alt="Campus Event">
+    </div>
+</div>
+
+<div class="hero-section">
+    <br><br><br><br><br><br><br>
+    <h1>Welcome to Department of Data Science</h1>
+    <br>
+    <h3>Discover beauty, design, and functionality all in one place.</h3>
+    <br><br>
+    <a href="#about" class="cta-button">Explore Now</a>
+</div>
+</header>
+
+<section id="about" class="about-section">
+<div class="container">
+    <br><br>
+    <h2>About Us</h2>
+    <br>
+    <p>We provide exceptional web solutions, ensuring that design and usability blend seamlessly. Our team is passionate about creating digital experiences that resonate with users.
+        <b><br>We provide Administrative support, Academic support, Event coordination.</b><br><br><br>
+    </p>
+</div>
+</section>
+
+<section id="services" class="services-section">
+<div class="container">
+    <h2>Our Services</h2>
+    <br>
+    <div class="service-card">
+    <a href="login.html?redirect=report.html"><h3>Report an Issue</h3></a>
+    <p>Submit problems or concerns related to campus facilities, academics,
+         or Workshops for quick resolution.</p><br>
+    </div>
+     <div class="service-card">
+        <a href="workshop.html"><h3>Workshops</h3></a>
+        <p>Explore hands-on training sessions and skill development workshops conducted on campus.</p><br>
+    </div>
+
+    <div class="service-card">
+    <a href="roadmaps.html"><h3>Roadmaps</h3></a>
+    <p>Developing high-effective, scalable RoadMaps to grow instantly.</p><br>
+    </div>
+    <div class="service-card">
+    <a href="Resources.html"><h3>Student Resources</h3></a>
+    <p>Contains all the Resources for Placement preparation.</p><br>
+    </div>
+    <div class="service-card">
+        <a href="lostfound.html"><h3>Lost & Found</h3></a>
+        <p>Report or search for lost and found items within the campus community.</p><br>
+    </div>
+    <div class="service-card">
+        <a href="admin.html"><h3>Admin Support</h3></a>
+        <p>Get administrative assistance for campus-related services and queries.</p><br>
+    </div>
+</div>
+</section>
+
+<footer class="main-footer">
+<div class="container">
+    <p>&copy; Student Department Assistant.</p>
+    <br>
+    <p>
+        <mark><b>Team</b></mark>
+    </p>
+    <pre style="font-family: monospace; font-size:16px; margin:0;">
+Rajarapu Venkateswarlu                23KP1A44D6
+Shaik Juveria Zainab                  23KP1A44E9
+Shaik Rizwana                         23KP1A44F5
+Shaik Sahul Ameen                     23KP1A44F6
+Veeragandham Purna Prakash            23KP1A44I4
+    </pre>
+</div>
+</footer>
+
+
+<script>
+    let slideIndex = 0;
+    showSlides();
+
+    function showSlides() {
+        let slides = document.getElementsByClassName("slide");
+        for (let i = 0; i < slides.length; i++) {
+            slides[i].style.display = "none";  
+        }
+        slideIndex++;
+        if (slideIndex > slides.length) {slideIndex = 1}    
+        slides[slideIndex-1].style.display = "block";  
+        setTimeout(showSlides, 4000); // Change image every 4 seconds
+    }
+</script>
+</body>
+</html>

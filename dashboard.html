@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #ece9e6, #ffffff);
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #222;
+      color: #fff;
+      padding: 15px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+    .container {
+      padding: 20px;
+    }
+    h2 {
+      margin-top: 20px;
+      color: #333;
+      text-align: center;
+      font-size: 22px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      background: #fff;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 12px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+    th {
+      background: #444;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    tr:nth-child(even) {
+      background: #f9f9f9;
+    }
+
+    /* Button Styling */
+    .btn-container {
+      text-align: center;
+      margin: 30px 0;
+    }
+    .btn-container button {
+      border: none;
+      padding: 14px 30px;
+      margin: 10px;
+      cursor: pointer;
+      border-radius: 40px;
+      font-size: 16px;
+      font-weight: bold;
+      letter-spacing: 1px;
+      color: #fff;
+      position: relative;
+      transition: all 0.3s ease;
+      box-shadow: 0 6px 0px rgba(0,0,0,0.2), 0 6px 15px rgba(0,0,0,0.3);
+    }
+    /* Unique button gradients */
+    #btnReports {
+      background: linear-gradient(45deg, #ff416c, #ff4b2b);
+    }
+    #btnWorkshops {
+      background: linear-gradient(45deg, #00c6ff, #0072ff);
+    }
+    /* Hover effect */
+    .btn-container button:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+    }
+    /* Active (pressed) effect */
+    .btn-container button:active {
+      transform: translateY(3px);
+      box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+    }
+    /* Active highlight */
+    .active-btn {
+      border: 2px solid #fff;
+      box-shadow: 0 0 20px rgba(255,255,255,0.8);
+    }
+
+    /* Hide sections by default */
+    .hidden {
+      display: none;
+    }
+
+    /* Fade-in animation */
+    .fade-in {
+      animation: fadeIn 0.6s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Admin Dashboard</h1>
+    <p>Welcome, Admin 👨‍💻</p>
+  </header>
+
+  <div class="btn-container">
+    <button id="btnReports" onclick="showSection('reports', this)">📢 Report an Issue</button>
+    <button id="btnWorkshops" onclick="showSection('workshops', this)">📝 Workshops Registrations</button>
+  </div>
+
+  <div class="container">
+    <!-- Reported Issues -->
+    <div id="reportsSection" class="hidden">
+      <h2>📢 Reported Issues</h2>
+      <table id="reportTable">
+        <thead>
+          <tr>
+            <th>Issue Type</th>
+            <th>Class</th>
+            <th>Section</th>
+            <th>Year</th>
+            <th>Branch</th>
+            <th>Location</th>
+            <th>Priority</th>
+            <th>Description</th>
+            <th>File</th>
+            <th>Submitted At</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <!-- Workshop Registrations -->
+    <div id="workshopsSection" class="hidden">
+      <h2>📝 Workshop Registrations</h2>
+      <table id="workshopTable">
+        <thead>
+          <tr>
+            <th>Event</th>
+            <th>Roll No</th>
+            <th>Branch</th>
+            <th>Year</th>
+            <th>Class</th>
+            <th>Section</th>
+            <th>Registered At</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    // Toggle Sections
+    function showSection(section, btn) {
+      // Hide all sections
+      document.getElementById("reportsSection").classList.add("hidden");
+      document.getElementById("workshopsSection").classList.add("hidden");
+
+      // Show the selected section with fade effect
+      if (section === "reports") {
+        document.getElementById("reportsSection").classList.remove("hidden");
+        document.getElementById("reportsSection").classList.add("fade-in");
+      } else {
+        document.getElementById("workshopsSection").classList.remove("hidden");
+        document.getElementById("workshopsSection").classList.add("fade-in");
+      }
+
+      // Reset fade animation
+      setTimeout(() => {
+        document.getElementById(section + "Section").classList.remove("fade-in");
+      }, 600);
+
+      // Update button styles
+      document.querySelectorAll(".btn-container button").forEach(b => b.classList.remove("active-btn"));
+      btn.classList.add("active-btn");
+    }
+
+    // Load Workshop Registrations
+    const registrations = JSON.parse(localStorage.getItem("registrations")) || [];
+    const workshopTable = document.querySelector("#workshopTable tbody");
+    registrations.forEach(reg => {
+      const row = `<tr>
+        <td>${reg.eventName}</td>
+        <td>${reg.rollNumber}</td>
+        <td>${reg.branch}</td>
+        <td>${reg.year}</td>
+        <td>${reg.class}</td>
+        <td>${reg.section}</td>
+        <td>${reg.registeredAt}</td>
+      </tr>`;
+      workshopTable.innerHTML += row;
+    });
+
+    // Load Reported Issues
+    const reports = JSON.parse(localStorage.getItem("reports")) || [];
+    const reportTable = document.querySelector("#reportTable tbody");
+    reports.forEach(r => {
+      const row = `<tr>
+        <td>${r.issueType}</td>
+        <td>${r.studentClass}</td>
+        <td>${r.section}</td>
+        <td>${r.year}</td>
+        <td>${r.branch}</td>
+        <td>${r.location}</td>
+        <td>${r.priority}</td>
+        <td>${r.description}</td>
+        <td>${r.file}</td>
+        <td>${r.submittedAt}</td>
+      </tr>`;
+      reportTable.innerHTML += row;
+    });
+  </script>
+</body>
+</html>
