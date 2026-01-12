@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Report an Issue</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+ 
+  <!-- Navigation -->
+  <ul class="navbar">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="workshop.html">Workshops</a></li>
+    <li><a href="lostfound.html">Lost & Found</a></li>
+    <li><a href="admin.html">Admin</a></li>
+    <li><a href="report.html" class="active">Report an Issue</a></li>
+  </ul>
+
+  <!-- Page Content -->
+  <div class="container">
+    <h1>Report An Issue</h1>
+    <p class="subtitle">Submit problems or concerns related to campus facilities, academics, or technical resources.</p>
+
+    <form id="issueForm" enctype="multipart/form-data">
+      <!-- Issue Type -->
+      <label>Issue Type *</label>
+      <div class="issue-types">
+        <!-- Technical Issues -->
+        <button type="button" class="issue-btn" data-value="Computer Malfunction">💻 Computer Malfunction</button>
+        <button type="button" class="issue-btn" data-value="Server Issue">🖥 Server Issue</button>
+        <button type="button" class="issue-btn" data-value="Network Problem">📡 Network Problem</button>
+        <button type="button" class="issue-btn" data-value="Software Issue">⚠ Software Issue</button>
+
+        <!-- Campus Issues -->
+        <button type="button" class="issue-btn" data-value="Academics">📘 Academics</button>
+        <button type="button" class="issue-btn" data-value="Toilets">🚻 Toilets</button>
+        <button type="button" class="issue-btn" data-value="Water Problem">💧 Water Problem</button>
+        <button type="button" class="issue-btn" data-value="Lab Equipment">🔬 Lab Equipment</button>
+        <button type="button" class="issue-btn" data-value="Fans">🌀 Fans</button>
+        <button type="button" class="issue-btn" data-value="Lights">💡 Lights</button>
+        <button type="button" class="issue-btn" data-value="Classroom Maintenance">🏫 Classroom Maintenance</button>
+        <button type="button" class="issue-btn" data-value="Others">➕ Others</button>
+      </div>
+      <input type="hidden" name="issueType" id="selectedIssue" required>
+
+      <style>
+        .form-row {
+          display: flex;
+          gap: 20px; /* Adjust the gap between columns */
+          flex-wrap: wrap; /* Wrap to next line on smaller screens */
+        }
+
+        .form-row > div {
+          display: flex;
+          flex-direction: column;
+          flex: 1; /* All columns have equal width */
+        }
+
+        .form-row label {
+          margin-bottom: 5px;
+          font-weight: bold;
+        }
+
+        .form-row input,
+        .form-row select {
+          padding: 8px;
+          font-size: 14px;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+        }
+      </style>
+
+      <div class="form-row">
+        <div>
+          <label for="studentClass">Class *</label>
+          <input type="text" id="studentClass" placeholder="e.g., B.Tech, M.Tech" required>
+        </div>
+        <div>
+          <label for="section">Section *</label>
+          <input type="text" id="section" placeholder="e.g., A, B, C" required>
+        </div>
+        <div>
+          <label for="year">Year *</label>
+          <select id="year" required>
+            <option value="">Select Year</option>
+            <option>1st Year</option>
+            <option>2nd Year</option>
+            <option>3rd Year</option>
+            <option>4th Year</option>
+          </select>
+        </div>
+        <div>
+          <label for="branch">Branch *</label>
+          <input type="text" id="branch" placeholder="e.g., CSE, ECE, ME" required>
+        </div>
+      </div>
+
+      <!-- Location & Priority -->
+      <div class="form-row">
+        <div>
+          <label for="location">Location *</label>
+          <input type="text" id="location" placeholder="e.g., Lab 201, Classroom A-Block 3rd Floor" required>
+        </div>
+        <div>
+          <label for="priority">Priority Level</label>
+          <select id="priority">
+            <option>Low Priority</option>
+            <option selected>Medium Priority</option>
+            <option>High Priority</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <label for="description">Description *</label>
+      <textarea id="description" placeholder="Please describe the issue in detail..." required></textarea>
+
+      <!-- Upload Image/File -->
+      <label for="fileUpload">Upload Image or File (optional)</label>
+      <input type="file" id="fileUpload" name="fileUpload" accept="image/*,.pdf,.doc,.docx">
+
+      <!-- Submit -->
+      <button type="submit" class="submit-btn">Submit Issue</button>
+    </form>
+  </div>
+
+  <!-- Updated JavaScript -->
+  <script>
+    // Handle issue type selection
+    const issueButtons = document.querySelectorAll('.issue-btn');
+    const selectedIssueInput = document.getElementById('selectedIssue');
+
+    issueButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        issueButtons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+        selectedIssueInput.value = button.getAttribute('data-value');
+      });
+    });
+
+    // Handle form submission
+    document.getElementById('issueForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      if (!selectedIssueInput.value) {
+        alert("⚠ Please select an Issue Type before submitting.");
+        return;
+      }
+
+      const issueData = {
+        issueType: selectedIssueInput.value,
+        studentClass: document.getElementById('studentClass').value,
+        section: document.getElementById('section').value,
+        year: document.getElementById('year').value,
+        branch: document.getElementById('branch').value,
+        location: document.getElementById('location').value,
+        priority: document.getElementById('priority').value,
+        description: document.getElementById('description').value,
+        file: document.getElementById('fileUpload').files[0]?.name || "No file uploaded",
+        submittedAt: new Date().toLocaleString()
+      };
+
+      // Save to localStorage
+      let reports = JSON.parse(localStorage.getItem("reports")) || [];
+      reports.push(issueData);
+      localStorage.setItem("reports", JSON.stringify(reports));
+
+      alert("✅ Your issue has been submitted successfully!");
+      this.reset();
+      issueButtons.forEach(btn => btn.classList.remove('active'));
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Lost & Found Board</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #a09682, #250f2d);
+      min-height: 100vh;
+      padding: 2rem;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      color: #2c3e50;
+      text-shadow: 1px 1px 3px rgba(255,255,255,0.6);
+    }
+    header p { text-align: center; margin-bottom: 2rem; color: #555; }
+    .stats, .main .form-card, .main .items-card {
+      background: #ffffffdd;
+      border-radius: 15px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+    }
+    .stats {
+      display: flex; justify-content: center; gap: 1.5rem;
+      margin-bottom: 2rem; flex-wrap: wrap; padding: 1rem;
+    }
+    .stat-card {
+      flex: 1; min-width: 180px; padding: 1.2rem;
+      border-radius: 12px; text-align: center; background: #fff;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .stat-card:hover { transform: translateY(-6px); box-shadow: 0 8px 20px rgba(0,0,0,0.12); }
+    .stat-card h2 { font-size: 2rem; margin-bottom: 0.3rem; }
+    .lost-count { color: #ff7675; } .found-count { color: #00b894; } .solved-count { color: #0984e3; }
+    .main { display: grid; grid-template-columns: 320px 1fr; gap: 2rem; }
+    @media(max-width: 900px) { .main { grid-template-columns: 1fr; } }
+    .form-card { padding: 1.5rem; }
+    .form-card h3 { margin-bottom: 1rem; color: #2c3e50; }
+    .form-card form { display: grid; gap: 1rem; }
+    input, select, textarea {
+      padding: 0.8rem; border: 1px solid #ddd; border-radius: 10px;
+      font-size: 0.95rem; width: 100%; outline: none; background: #fff;
+    }
+    button {
+      padding: 0.8rem 1.2rem; border: none; border-radius: 10px;
+      cursor: pointer; font-weight: 600; transition: all 0.3s;
+    }
+    .btn-primary { background: #0984e3; color: white; }
+    .btn-primary:hover { background: #0670c9; }
+    .btn-success { background: #00b894; color: white; }
+    .btn-danger { background: #d63031; color: white; }
+    .btn-gray { background: #636e72; color: white; }
+    button:hover { transform: scale(1.05); }
+    .items-card { padding: 1.5rem; }
+    .items-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; color: #2c3e50; }
+    .filters { display: flex; gap: 0.5rem; }
+    .filters select {
+      padding: 0.5rem; border-radius: 8px; border: 1px solid #ccc; background: #fff;
+    }
+    .item {
+      border: 1px solid #eee; border-radius: 12px;
+      padding: 1rem; margin-bottom: 1rem; background: #fff;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .item:hover { transform: translateY(-4px); box-shadow: 0 6px 15px rgba(0,0,0,0.12); }
+    .item-header { display: flex; justify-content: space-between; align-items: center; }
+    .item-header h4 { margin: 0; color: #2c3e50; }
+    .badge {
+      padding: 0.4rem 0.8rem; border-radius: 10px; font-size: 0.8rem; font-weight: 600; color: white;
+    }
+    .lost { background: #ff7675; } .found { background: #00b894; } .solved { background: #0984e3; }
+    .item p { margin: 0.5rem 0; font-size: 0.9rem; color: #555; }
+    .meta { font-size: 0.8rem; color: #777; }
+    .actions { margin-top: 0.5rem; display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .item img {
+      max-width: 100%; border-radius: 10px; margin-top: 0.5rem; max-height: 180px; object-fit: cover;
+    }
+    /* Modal */
+    .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; }
+    .modal-content {
+      background: #fff; padding: 1.5rem; border-radius: 12px;
+      width: 300px; text-align: center; box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+      animation: fadeIn 0.3s ease-in-out;
+    }
+    .modal-content h3 { margin-bottom: 1rem; }
+    .modal-content p { margin: 0.5rem 0; }
+    .close-btn {
+      margin-top: 1rem; background: #d63031; color: white;
+      border: none; border-radius: 8px; padding: 0.5rem 1rem; cursor: pointer;
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Lost & Found Board</h1>
+    <p>Help your fellow students find their lost items or claim found items</p>
+  </header>
+
+  <div class="stats">
+    <div class="stat-card"><h2 id="lostCount" class="lost-count">0</h2><p>Lost Items</p></div>
+    <div class="stat-card"><h2 id="foundCount" class="found-count">0</h2><p>Found Items</p></div>
+    <div class="stat-card"><h2 id="solvedCount" class="solved-count">0</h2><p>Solved</p></div>
+  </div>
+
+  <div class="main">
+    <div class="form-card">
+      <h3>➕ Post Item</h3>
+      <form id="itemForm">
+        <select id="type" required>
+          <option value="">Type *</option>
+          <option value="Lost">Lost</option>
+          <option value="Found">Found</option>
+        </select>
+        <input type="text" id="title" placeholder="Item Name *" required>
+        <textarea id="description" placeholder="Description *" required></textarea>
+        <input type="text" id="location" placeholder="Location" required>
+        <input type="text" id="contact" placeholder="Phone or Email" required>
+        <input type="file" id="image" accept="image/*">
+        <button type="submit" class="btn-primary">Post</button>
+      </form>
+    </div>
+
+    <div class="items-card">
+      <div class="items-header">
+        <h3>📋 Items (<span id="itemCount">0</span>)</h3>
+        <div class="filters">
+          <select id="filterType">
+            <option value="All">All Types</option>
+            <option value="Lost">Lost</option>
+            <option value="Found">Found</option>
+          </select>
+          <select id="filterStatus">
+            <option value="All">All Status</option>
+            <option value="Active">Active</option>
+            <option value="Solved">Solved</option>
+          </select>
+        </div>
+      </div>
+      <div id="itemList"></div>
+    </div>
+  </div>
+
+  <!-- Contact Modal -->
+  <div class="modal" id="contactModal">
+    <div class="modal-content">
+      <h3>📞 Contact Info</h3>
+      <p id="contactInfo"></p>
+      <button class="close-btn" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('itemForm');
+    const itemList = document.getElementById('itemList');
+    const itemCount = document.getElementById('itemCount');
+    const lostCount = document.getElementById('lostCount');
+    const foundCount = document.getElementById('foundCount');
+    const solvedCount = document.getElementById('solvedCount');
+    const filterType = document.getElementById('filterType');
+    const filterStatus = document.getElementById('filterStatus');
+    const modal = document.getElementById('contactModal');
+    const contactInfo = document.getElementById('contactInfo');
+
+    let items = [
+      {
+        id: 1,
+        type: "Lost",
+        title: "Black Wallet",
+        description: "Contains ID card and some cash. Lost near cafeteria.",
+        location: "Cafeteria",
+        contact: "9876543210",
+        date: "9/12/2025",
+        status: "Active",
+        image: ""
+      },
+      {
+        id: 2,
+        type: "Found",
+        title: "Water Bottle",
+        description: "Blue stainless steel bottle found in Lab A-102.",
+        location: "Lab A-102",
+        contact: "anna@example.com",
+        date: "9/13/2025",
+        status: "Active",
+        image: ""
+      },
+      {
+        id: 3,
+        type: "Lost",
+        title: "MacBook Pro 13-inch",
+        description: "Silver laptop with stickers. Left in library.",
+        location: "Library 2nd floor",
+        contact: "mike@example.com",
+        date: "9/13/2025",
+        status: "Solved",
+        image: ""
+      },
+      {
+        id: 1,
+        type: "Lost",
+        title: "Black Wallet",
+        description: "Contains ID card and some cash. Lost near cafeteria.",
+        location: "Cafeteria",
+        contact: "9876543210",
+        date: "9/12/2025",
+        status: "Active",
+        image: ""
+        },
+        {
+        id: 2,
+        type: "Found",
+        title: "Water Bottle",
+        description: "Blue stainless steel bottle found in Lab A-102.",
+        location: "Lab A-102",
+        contact: "anna@example.com",
+        date: "9/13/2025",
+        status: "Active",
+        image: ""
+        },
+        {
+        id: 3,
+        type: "Lost",
+        title: "MacBook Pro 13-inch",
+        description: "Silver laptop with stickers. Left in library.",
+        location: "Library 2nd floor",
+        contact: "mike@example.com",
+        date: "9/13/2025",
+        status: "Solved",
+        image: ""
+        },
+        {
+        id: 4,
+        type: "Found",
+        title: "Smartphone (Samsung Galaxy)",
+        description: "Black Samsung Galaxy with cracked screen found near bus stop.",
+        location: "Main Gate Bus Stop",
+        contact: "security@campus.edu",
+        date: "9/11/2025",
+        status: "Active",
+        image: ""
+        },
+        {
+        id: 5,
+        type: "Lost",
+        title: "Set of Keys",
+        description: "Bunch of 3 keys with red keychain, lost in hostel area.",
+        location: "Hostel Block B",
+        contact: "9988776655",
+        date: "9/10/2025",
+        status: "Active",
+        image: ""
+        },
+        {
+        id: 6,
+        type: "Found",
+        title: "Calculator (Casio FX-991EX)",
+        description: "Found in classroom A-204 after math lecture.",
+        location: "Classroom A-204",
+        contact: "john_doe@example.com",
+        date: "9/9/2025",
+        status: "Solved",
+        image: ""
+        },
+        {
+        id: 7,
+        type: "Lost",
+        title: "Backpack",
+        description: "Blue backpack with books and notebooks. Lost near sports ground.",
+        location: "Sports Ground",
+        contact: "lisa@gmail.com",
+        date: "9/8/2025",
+        status: "Active",
+        image: ""
+        },
+        {
+        id: 8,
+        type: "Found",
+        title: "Wrist Watch",
+        description: "Silver analog watch found in canteen.",
+        location: "Canteen",
+        contact: "watchfinder@campus.edu",
+        date: "9/7/2025",
+        status: "Active",
+        image: ""
+        }
+        ];
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+
+      const fileInput = document.getElementById('image');
+      let imageSrc = "";
+      if (fileInput.files && fileInput.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+          imageSrc = ev.target.result;
+          addItem(imageSrc);
+        };
+        reader.readAsDataURL(fileInput.files[0]);
+      } else {
+        addItem("");
+      }
+    });
+
+    function addItem(imageSrc) {
+      const newItem = {
+        id: Date.now(),
+        type: document.getElementById('type').value,
+        title: document.getElementById('title').value,
+        description: document.getElementById('description').value,
+        location: document.getElementById('location').value,
+        contact: document.getElementById('contact').value,
+        date: new Date().toLocaleDateString(),
+        status: "Active",
+        image: imageSrc
+      };
+      items.unshift(newItem);
+      form.reset();
+      renderItems();
+    }
+
+    function updateStatus(id, status) {
+      const item = items.find(i => i.id === id);
+      if (item) item.status = status;
+      renderItems();
+    }
+
+    function deleteItem(id) {
+      items = items.filter(i => i.id !== id);
+      renderItems();
+    }
+
+    function openModal(contact) {
+      contactInfo.textContent = contact;
+      modal.style.display = "flex";
+    }
+    function closeModal() {
+      modal.style.display = "none";
+    }
+
+    function renderItems() {
+      itemList.innerHTML = "";
+      let filtered = items.filter(i => {
+        let typeMatch = filterType.value === "All" || i.type === filterType.value;
+        let statusMatch = filterStatus.value === "All" ||
+          (filterStatus.value === "Active" && i.status === "Active") ||
+          (filterStatus.value === "Solved" && i.status === "Solved");
+        return typeMatch && statusMatch;
+      });
+      filtered.forEach(item => {
+        let div = document.createElement('div');
+        div.className = "item";
+        div.innerHTML = `
+          <div class="item-header">
+            <h4>${item.title}</h4>
+            <span class="badge ${item.status === 'Solved' ? 'solved' : item.type.toLowerCase()}">
+              ${item.status === 'Solved' ? 'Solved' : item.type}
+            </span>
+          </div>
+          <p>${item.description}</p>
+          ${item.image ? `<img src="${item.image}" alt="${item.title}">` : ""}
+          <p class="meta">📍 ${item.location} | 📅 ${item.date}</p>
+          <div class="actions">
+            ${item.status === 'Active' ? 
+              `<button class="btn-success" onclick="updateStatus(${item.id}, 'Solved')">Solved</button>` : 
+              `<button class="btn-danger" onclick="updateStatus(${item.id}, 'Active')">Set Active</button>
+               <button class="btn-danger" onclick="deleteItem(${item.id})">Delete</button>`}
+            <button class="btn-gray" onclick="openModal('${item.contact}')">Contact</button>
+          </div>
+        `;
+        itemList.appendChild(div);
+      });
+      itemCount.textContent = items.length;
+      lostCount.textContent = items.filter(i => i.type === "Lost" && i.status !== "Solved").length;
+      foundCount.textContent = items.filter(i => i.type === "Found" && i.status !== "Solved").length;
+      solvedCount.textContent = items.filter(i => i.status === "Solved").length;
+    }
+
+    filterType.addEventListener('change', renderItems);
+    filterStatus.addEventListener('change', renderItems);
+    renderItems();
+  </script>
+</body>
+</html>

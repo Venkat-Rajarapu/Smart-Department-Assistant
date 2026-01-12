@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D Admin Login</title>
+  <style>
+ body{
+  margin:0;
+  font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+  min-height:100vh;
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  color:#e6eef3;
+  overflow:hidden;
+
+  background:
+    linear-gradient(
+      rgba(10,20,40,0.35),
+      rgba(10,20,40,0.35)
+    ),
+    url("https://img.freepik.com/free-photo/gradient-navy-blue-digital-grid-wallpaper_53876-104785.jpg?semt=ais_hybrid&w=740&q=80");
+
+  background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
+}
+
+    .neumorphic-card {
+      padding: 40px;
+      width: 380px;
+      text-align: center;
+      border-radius: 25px;
+      background: #e8ecf3;
+      box-shadow: 15px 15px 30px rgba(0,0,0,0.4),
+                  -15px -15px 30px rgba(255,255,255,0.15);
+      transition: transform 0.5s ease, box-shadow 0.3s ease;
+      animation: fadeIn 1.5s ease forwards;
+      opacity: 0;
+    }
+
+    @keyframes fadeIn {
+      from { transform: translateY(-40px) rotateX(10deg); opacity: 0; }
+      to { transform: translateY(0) rotateX(0); opacity: 1; }
+    }
+
+    .neumorphic-card h1 {
+      margin-bottom: 20px;
+      color: #222;
+    }
+
+    .neumorphic-input {
+      border: none;
+      outline: none;
+      padding: 12px 20px;
+      margin: 12px 0;
+      width: 90%;
+      font-size: 16px;
+      border-radius: 20px;
+      background: #e8ecf3;
+      box-shadow: inset 5px 5px 10px #b8c0cc,
+                  inset -5px -5px 10px #ffffff;
+      transition: 0.3s;
+    }
+
+    .neumorphic-input:focus {
+      box-shadow: inset 3px 3px 6px #b8c0cc,
+                  inset -3px -3px 6px #ffffff,
+                  0 0 10px rgba(102,166,255,0.7);
+    }
+
+    .neumorphic-button {
+      border: none;
+      outline: none;
+      padding: 12px 30px;
+      margin-top: 15px;
+      font-size: 15px;
+      font-weight: bold;
+      border-radius: 20px;
+      background: #e8ecf3;
+      color: #333;
+      box-shadow: 8px 8px 15px #b8c0cc,
+                  -8px -8px 15px #ffffff;
+      cursor: pointer;
+      transition: all 0.3s ease-in-out;
+      width: 100%;
+    }
+
+    .neumorphic-button:hover {
+      background: #f5f6f9;
+      transform: scale(1.05);
+      box-shadow: 10px 10px 20px rgba(0,0,0,0.2),
+                  -10px -10px 20px rgba(255,255,255,0.9);
+    }
+
+    .neumorphic-button:active {
+      transform: scale(0.95);
+      box-shadow: inset 5px 5px 10px #b8c0cc,
+                  inset -5px -5px 10px #ffffff;
+    }
+
+    .form-container {
+      display: none;
+      animation: fadeForm 0.6s ease;
+    }
+
+    .form-container.active {
+      display: block;
+    }
+
+    @keyframes fadeForm {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="neumorphic-card">
+    
+    <!-- LOGIN FORM -->
+    <div id="loginForm" class="form-container active">
+      <h1>Admin Login</h1>
+      <input type="text" class="neumorphic-input" id="username" placeholder="Username">
+      <input type="password" class="neumorphic-input" id="password" placeholder="Password">
+      <button class="neumorphic-button" onclick="login()">Sign In</button>
+      <button class="neumorphic-button" onclick="forgotPassword()">Forgot Password</button>
+      <button class="neumorphic-button" onclick="showSignup()">Sign Up</button>
+    </div>
+
+    <!-- SIGNUP FORM -->
+    <div id="signupForm" class="form-container">
+      <h1>Register</h1>
+      <input type="text" class="neumorphic-input" id="newUsername" placeholder="Enter Username">
+      <input type="email" class="neumorphic-input" id="newEmail" placeholder="Enter Email">
+      <input type="password" class="neumorphic-input" id="newPassword" placeholder="Enter Password">
+      <input type="password" class="neumorphic-input" id="confirmPassword" placeholder="Confirm Password">
+      <button class="neumorphic-button" onclick="register()">Register</button>
+      <button class="neumorphic-button" onclick="showLogin()">Back to Login</button>
+    </div>
+
+  </div>
+
+  <script>
+    // Default admin credentials
+    const defaultUser = "Lemon";
+    const defaultPass = "Lemon";
+
+    function login() {
+      const user = document.getElementById('username').value.trim();
+      const pass = document.getElementById('password').value.trim();
+
+      if (user === defaultUser && pass === defaultPass) {
+        alert("✅ Login Successful! Redirecting...");
+        window.location.href = "dashboard.html";
+      } else {
+        alert("❌ Invalid Username or Password!");
+      }
+    }
+
+    function forgotPassword() {
+      alert("🔑 Forgot Password clicked! (Redirect to reset page)");
+    }
+
+    function showSignup() {
+      document.getElementById('loginForm').classList.remove('active');
+      document.getElementById('signupForm').classList.add('active');
+    }
+
+    function showLogin() {
+      document.getElementById('signupForm').classList.remove('active');
+      document.getElementById('loginForm').classList.add('active');
+    }
+
+    function register() {
+      const user = document.getElementById('newUsername').value.trim();
+      const email = document.getElementById('newEmail').value.trim();
+      const pass = document.getElementById('newPassword').value.trim();
+      const confirm = document.getElementById('confirmPassword').value.trim();
+
+      if (user && email && pass && confirm) {
+        if (pass === confirm) {
+          alert("✅ Registered Successfully! Please Login.");
+          showLogin();
+        } else {
+          alert("❌ Passwords do not match!");
+        }
+      } else {
+        alert("⚠️ Please fill all fields!");
+      }
+    }
+  </script>
+</body>
+</html>
